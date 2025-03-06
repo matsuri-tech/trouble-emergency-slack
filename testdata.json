@@ -65,3 +65,37 @@
     ]
   }
   
+  /*
+  // app.js 等、呼び出し元の例
+const { createMessagePayload } = require('./messageHandler');
+
+// たとえばこういう形の配列を用意して関数に渡す
+const rowData = [
+  { "formId": "F12345" },
+  { "classification": "自火報トラブル" },
+  { "sColumnValue": "CX" },
+  { "channel": "slack-channel-id" },
+  { "propertyName": "新宿アパートメント" },
+  { "entryTimeIso": "2023-01-01T10:00:00Z" },
+  { "who": "予約コードABC999" },
+  { "whatHappened": "火災報知器が鳴り止まない" },
+  { "request": "すぐに止めてほしい" },
+  { "handoverFormId": "9876" },
+  { "contractAttribute": "短期賃貸" },
+  { "inputBy": "管理者A" },
+  { "troubleUrl": "https://example.com/trouble" },
+  { "reservationRoute": "Booking.com" },
+  { "checkinDate": "2023-02-15" },
+  { "checkoutDate": "2023-02-18" },
+  { "m2mAdminUrl": "https://example.com/admin123" },
+  { "m2mCleanerUrl": "https://example.com/cleaner123" }
+];
+
+// 関数を呼び出してペイロードを取得
+const payload = createMessagePayload(rowData);
+
+// 後は Slack API (chat.postMessage 等) に payload を渡す
+// await slackClient.chat.postMessage(payload);
+
+  
+  */
