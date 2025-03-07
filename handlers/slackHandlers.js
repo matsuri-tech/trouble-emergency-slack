@@ -1,7 +1,7 @@
 // messageHandler.js
 
 // 必要なユーティリティ関数をインポート（例: 日付をフォーマットする関数）
-const { formatDate, convertISOToCustomFormat } = require('../utils/dateUtils');
+const { formatDate, convertISOToCustomFormat } = require('../utils/bqUtility');
 
 /**
  * rowは以下のような配列を想定：
@@ -9,7 +9,7 @@ const { formatDate, convertISOToCustomFormat } = require('../utils/dateUtils');
  * [
  *   { "formId": "xxxxx" },
  *   { "classification": "自火報トラブル" },
- *   { "sColumnValue": "CX" },
+ *   { "mention": "CX" },
  *   { "channel": "slack-channel-id" },
  *   { "propertyName": "新宿アパートメント" },
  *   { "entryTimeIso": "2023-01-01T10:00:00Z" },
@@ -39,7 +39,7 @@ function createMessagePayload(row) {
   // 各種フィールドの取得
   const formId = findValue("formId");
   const classification = findValue("classification");
-  const sColumnValue = findValue("sColumnValue");
+  const mention = findValue("mention");
   const channel = findValue("channel");
   const propertyName = findValue("propertyName");
 
@@ -78,14 +78,14 @@ function createMessagePayload(row) {
     classification === "物理鍵トラブル" ||
     classification === "TTlockトラブル"
       ? "#ED1A3D"
-      : sColumnValue === "CX"
+      : mention === "CX"
       ? "#f2c744"
       : "#0000ff";
 
   // ここから Slack 向けのペイロード組み立て
   return {
     channel: channel,
-    text: sColumnValue === "CX" ? user1 : user2, // "CX"の場合は user1、それ以外は user2
+    text: mention === "CX" ? user1 : user2, // "CX"の場合は user1、それ以外は user2
     attachments: [
       {
         color: color,
