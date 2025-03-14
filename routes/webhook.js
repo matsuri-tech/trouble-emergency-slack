@@ -3,11 +3,22 @@ const express = require('express');
 const axios = require('axios');
 const { questionHandlers, getHandoverFormData } = require('../handlers/questionHandlers');
 const { createMessagePayload } = require('../handlers/slackHandlers');
+require('dotenv').config();  // ローカル開発用
 
 const router = express.Router();
 
-const slackWebhookUrl = 'https://hooks.slack.com/services/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';
+// SlackトークンやURLを環境変数から読み込み
+const SLACK_TOKEN = process.env.SLACK_TOKEN;
+const SLACK_CHANNEL = 'C08GVJTJMAB';
+// URLも環境変数化してもOK。今回は固定
+const slackApiUrl = process.env.SLACK_API_URL;
+// Slackトークンが無ければ警告
+if (!SLACK_TOKEN) {
+  console.error('SLACK_TOKEN is missing. Please check your environment variables.');
+  // process.exit(1); // Cloud Functionsだと落ちすぎないように注意
+}
 
+// Webhook用のエンドポイント
 router.post('/webhook', async (req, res) => {
   try {
     const webhookData = req.body;
@@ -29,87 +40,64 @@ router.post('/webhook', async (req, res) => {
       }
     }
 
-    // handoverForm, genre
+    // handoverForm, genreなどの取得
     const handoverForm = processedResults["01J3WX05BJ13FMBZTJ4NP1N6ZG"]?.handoverForm || null;
     const genre = processedResults["18a07f085caf"]?.genre;
 
-    // userAttributeObj は必ずオブジェクトという前提
+    // userAttribute
     const userAttributeObj = processedResults["18943c0de28fb"]?.attribute || null;
-
-    // オブジェクトと想定される userAttributeObj の attribute フィールドを取り出す
-    // 例: userAttributeObj = { attribute: '社員' }
     const userAttributeString = userAttributeObj?.attribute || null;
 
-    // getHandoverFormData関数を呼び出す
     const mentionData = await getHandoverFormData(userAttributeString, genre, handoverForm);
 
-
-    // Slack送信用の rowData を作る
+    // Slack送信用のペイロード組み立て
     const rowData = [
-      { submissionId: submissionId || "" }, // null の場合は空文字
-      { createdAtEpoch: createdAt || "" },  // null の場合は空文字
-      { formId: formId || "" },             // null の場合は空文字
-      { classification: genre || "" },       // null の場合は空文字
-      { mention: mentionData && typeof mentionData.mention === "string" ? mentionData.mention : "" }, // null の場合は空文字
-    
-      { channel: 'slack-channel-id' },
+      { submissionId: submissionId || "" },
+      { createdAtEpoch: createdAt || "" },
+      { formId: formId || "" },
+      { classification: genre || "" },
+      { mention: mentionData && typeof mentionData.mention === "string" ? mentionData.mention : "" },
+      { channel: SLACK_CHANNEL },
       {
         propertyName:
           processedResults["18943c0561c3cd"]?.name ||
-          processedResults["189441cd23589"]?.commonareaName || "" // null の場合は空文字
+          processedResults["189441cd23589"]?.commonareaName ||
+          ""
       },
       { entryTimeIso: new Date(createdAt * 1000).toISOString() },
-      {
-        who: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.reservationCode || "" // null の場合は空文字
-      },
-      {
-        whatHappened: processedResults["01J3WWYF71WNHEHJP7A8TG1YTK"]?.content || "" // null の場合は空文字
-      },
-      {
-        request: processedResults["01J3WWZK4NRHBEFTJVBP9FY821"]?.whatToDo || "" // null の場合は空文字
-      },
-      {
-        handoverFormId:
-          processedResults["01J3WX05BJ13FMBZTJ4NP1N6ZG"]?.handoverForm || "" // null の場合は空文字
-      },
-      {
-        contractAttribute:
-          processedResults["18943c0561c3cd"]?.operation_type_ja || "" // null の場合は空文字
-      },
-      {
-        inputBy: processedResults["189537a502913f"]?.userName || "" // null の場合は空文字
-      },
-      {
-        troubleUrl: processedResults["1894412eaf515"]?.troubleUrl || "" // null の場合は空文字
-      },
-      {
-        reservationRoute:
-          processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.reservationRoute || "" // null の場合は空文字
-      },
-      {
-        checkinDate: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.checkinDate || "" // null の場合は空文字
-      },
-      {
-        checkoutDate: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.checkoutDate || "" // null の場合は空文字
-      },
-      { m2mAdminUrl: "" },  // null の場合は空文字
-      { m2mCleanerUrl: "" } // null の場合は空文字
+      { who: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.reservationCode || "" },
+      { whatHappened: processedResults["01J3WWYF71WNHEHJP7A8TG1YTK"]?.content || "" },
+      { request: processedResults["01J3WWZK4NRHBEFTJVBP9FY821"]?.whatToDo || "" },
+      { handoverFormId: handoverForm || "" },
+      { contractAttribute: processedResults["18943c0561c3cd"]?.operation_type_ja || "" },
+      { inputBy: processedResults["189537a502913f"]?.userName || "" },
+      { troubleUrl: processedResults["1894412eaf515"]?.troubleUrl || "" },
+      { reservationRoute: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.reservationRoute || "" },
+      { checkinDate: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.checkinDate || "" },
+      { checkoutDate: processedResults["01J3WWWKTBX8MQA8GG9ZS2SM2T"]?.checkoutDate || "" },
+      { m2mAdminUrl: "" },
+      { m2mCleanerUrl: "" }
     ];
-    
 
     console.log('rowData:', JSON.stringify(rowData, null, 2));
     const slackPayload = createMessagePayload(rowData);
 
-  
+    // Slack リクエスト
+    const headers = {
+      'Authorization': `Bearer ${SLACK_TOKEN}`,
+      'Content-Type': 'application/json',
+    };
 
     try {
-      const response = await axios.post(slackWebhookUrl, slackPayload);
-      console.log('Message sent to Slack:', response.data);
+      const response = await axios.post(slackApiUrl, slackPayload, { headers });
+      if (response.data.ok) {
+        console.log('Message sent to Slack:', response.data);
+      } else {
+        console.error('Failed to send message to Slack:', response.data.error);
+      }
     } catch (error) {
       console.error('Error sending message to Slack:', error.response ? error.response.data : error.message);
     }
-    
-
 
     res.status(200).send('Webhook data received successfully');
   } catch (error) {
@@ -118,4 +106,5 @@ router.post('/webhook', async (req, res) => {
   }
 });
 
+// このファイルはあくまでルータをエクスポート
 module.exports = router;

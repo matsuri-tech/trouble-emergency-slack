@@ -1,14 +1,12 @@
+// app.js (例)
 const express = require('express');
 const app = express();
 
-// webhook.js をインポート
+// ルーター読み込み
 const webhookRouter = require('./routes/webhook');
-
-// JSON形式のリクエストボディをパースするミドルウェア
 app.use(express.json());
+app.use('/', webhookRouter);
 
-// webhook.js に定義されたルートを /api/webhook で処理
-app.use('/api', webhookRouter);
-
-// Cloud Functions用にエクスポートする関数名を修正
+// Cloud Functionsのエントリーポイント
+// 自分で app.listen() は書かない！
 exports.troubleEmergencySlack = app;
