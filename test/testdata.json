@@ -1,0 +1,101 @@
+{
+    "submissionId": "01JN0HAQGWKCZ2XAGS78TERER6",
+    "formId": "01JN0FXQDK7DSBK6BN1WE5N8VY",
+    "revision": "58d7ab0926d6258b1eeeee1ea8504433",
+    "createdAt": 1740553674,
+    "values": [
+      { //listingid
+        "questionId": "18943c0561c3cd",
+        "value": "6ea3e309-19e1-4cf6-afc2-f8e78fbd6be9",
+        "file": null
+      },
+      { //commonareaid
+        "questionId": "189441cd23589",
+        "value": null,
+        "file": null
+      },
+      { //userid
+        "questionId": "18943c0de28fb",
+        "value": "b2e1d9eb-e905-40e1-bdb4-1fd56a74f177",
+        "file": null
+      },
+      { //username
+        "questionId": "189537a502913f",
+        "value": "村田 和輝",
+        "file": null
+      },
+      { //troubleid
+        "questionId": "1894412eaf515",
+        "value": "96995eb0-3207-4943-9fc7-b48861d37c73",
+        "file": null
+      },
+      { //genre
+        "questionId": "18a07f085caf",
+        "value": "部屋/建物不備・インフラ/wifiトラブル",
+        "file": null
+      },
+      
+      { //complatimant-reservationcode
+        "questionId": "01J3WWWKTBX8MQA8GG9ZS2SM2T",
+        "value": "4321228269",
+        "file": null
+      },
+
+      { //内容
+        "questionId": "01J3WWYF71WNHEHJP7A8TG1YTK",
+        "value": "トイレのドアノブが破損しておりますので修繕願います。",
+        "file": null
+      },
+
+      { //なにしてほしい
+        "questionId": "01J3WWZK4NRHBEFTJVBP9FY821",
+        "value": "修繕願います。",
+        "file": null
+      },
+
+      { //引き継ぎフォーム
+        "questionId": "01J3WX05BJ13FMBZTJ4NP1N6ZG",
+        "value": "viduo",
+        "file": null
+      }
+
+
+      
+      
+    ]
+  }
+  
+  /*
+  // app.js 等、呼び出し元の例
+const { createMessagePayload } = require('./messageHandler');
+
+// たとえばこういう形の配列を用意して関数に渡す
+const rowData = [
+  { "formId": "F12345" },
+  { "classification": "自火報トラブル" },
+  { "sColumnValue": "CX" },
+  { "channel": "slack-channel-id" },
+  { "propertyName": "新宿アパートメント" },
+  { "entryTimeIso": "2023-01-01T10:00:00Z" },
+  { "who": "予約コードABC999" },
+  { "whatHappened": "火災報知器が鳴り止まない" },
+  { "request": "すぐに止めてほしい" },
+  { "handoverFormId": "9876" },
+  { "contractAttribute": "短期賃貸" },
+  { "inputBy": "管理者A" },
+  { "troubleUrl": "https://example.com/trouble" },
+  { "reservationRoute": "Booking.com" },
+  { "checkinDate": "2023-02-15" },
+  { "checkoutDate": "2023-02-18" },
+  { "m2mAdminUrl": "https://example.com/admin123" },
+  { "m2mCleanerUrl": "https://example.com/cleaner123" }
+];
+
+// 関数を呼び出してペイロードを取得
+const payload = createMessagePayload(rowData);
+
+// 後は Slack API (chat.postMessage 等) に payload を渡す
+// await slackClient.chat.postMessage(payload);
+
+  
+  */

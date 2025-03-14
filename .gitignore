@@ -1,0 +1,30 @@
+# Node.js依存関係
+node_modules/
+
+# ログファイル
+*.log
+npm-debug.log
+
+# IDEやエディタの設定ファイル
+.vscode/          # Visual Studio Code
+.idea/            # JetBrains系IDE（IntelliJ, WebStorm など）
+*.sublime-workspace # Sublime Textのワークスペース
+
+# ビルド成果物（生成されるファイル）
+dist/             # ビルド後の成果物ディレクトリ
+build/            # ビルド後の成果物ディレクトリ
+*.min.js          # ミニファイド（圧縮）されたJSファイル
+
+# 環境設定ファイル（秘密情報や設定を含む可能性のあるファイル）
+.env              # 環境変数ファイル（APIキー、データベース接続情報など）
+
+# macOS/Windowsに依存するシステムファイル
+.DS_Store         # macOSが生成する隠しファイル
+Thumbs.db         # Windowsが生成するサムネイルキャッシュ
+
+# TypeScriptビルド情報
+*.tsbuildinfo     # TypeScriptのビルド情報ファイル
+
+# テストカバレッジ報告書
+coverage/         # Jest, Mochaなどのテストカバレッジディレクトリ
+.env
